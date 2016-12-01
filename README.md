@@ -1,4 +1,4 @@
-# jquery daf
+# jquery daf (django ajax forms)
 jQuery plugin making django forms submit through ajax, easily overridable settings
 
 Using csrf token from cookie
