@@ -8,4 +8,5 @@ plugin for using ajax on django forms, easily overridable on initialization
 
 ## Dependencies
 
-* jQuery 
+* [jQuery](http://jquery.com/download/)
+* [toastr](https://github.com/CodeSeven/toastr)
