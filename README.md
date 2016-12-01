@@ -3,8 +3,9 @@ plugin for using ajax on django forms, easily overridable on initialization
 
 ## Installation
 
-* Download [jquery-daf.php](https://github.com/zhgabor/jquery-daf/blob/master/jquery-daf.js) to `/static/js` directory 
-* ...
+* Download [jquery-daf.js](https://github.com/zhgabor/jquery-daf/blob/master/jquery-daf.js) to `/static/js` directory 
+* Include it in your html
+* Bind and Initialize the plugin
 
 ## Dependencies
 
