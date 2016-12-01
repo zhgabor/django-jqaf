@@ -1,5 +1,5 @@
-# django jqaf
-plugin for using ajax on django forms, easily overridable on initialization
+# jquery daf
+jQuery plugin making django forms submit through ajax, easily overridable settings
 
 ## Installation
 
