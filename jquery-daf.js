@@ -1,7 +1,3 @@
-/**
- * Created by dacianpopute on 23/09/16.
- */
-    // using jQuery
 function getCookie(name) {
     var cookieValue = null;
         if (document.cookie && document.cookie != '') {
@@ -31,25 +27,6 @@ $.ajaxSetup({
         }
     }
 });
-
-toastr.options = {
-    "closeButton": false,
-    "debug": false,
-    "newestOnTop": false,
-    "progressBar": false,
-    "positionClass": "toast-top-right",
-    "preventDuplicates": true,
-    "onclick": null,
-    "showDuration": "300",
-    "hideDuration": "1000",
-    "timeOut": "5000",
-    "extendedTimeOut": "1000",
-    "showEasing": "swing",
-    "hideEasing": "linear",
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut"
-    };
-if (lang == 'ar') toastr.options.rtl = true;
 
 function notifyServerError() {
     toastr.error(gettext('Error occurred. Refresh the page and try again.'))
