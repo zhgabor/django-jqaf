@@ -50,7 +50,24 @@ function notifyServerError() {
     //     return JsonResponse(data, status=400)
     var pluginName = 'DjangoAjaxHandler2';
     var defaults = {
-        container: $('body')
+        container: $('body'),
+        formSets: '', // only table types are supported
+    };
+
+    $.fn.attrs = function() {
+        if (arguments.length === 0) {
+            if (this.length === 0) {
+                return null;
+            }
+
+            var obj = {};
+            $.each(this[0].attributes, function() {
+                if (this.specified) {
+                    obj[this.name] = this.value;
+                }
+            });
+            return obj;
+        }
     };
 
     function Plugin(element, options) {
@@ -162,6 +179,64 @@ function notifyServerError() {
             instance.options.container.on('click', instance.options.submitBtn, performSubmit);
         };
         bindEvents();
+
+
+        var addFS = function(el){
+            var holder = el;
+            var max = parseInt(el.find('[name*="MAX_NUM_FORMS"]').val());
+            var lines = holder.find(instance.options.formSetItem).length;
+            if(lines < max){
+                var fs = holder.data('item').clone();
+                var num = getTotalForms(holder);  // initial id = 0, we calculate by FS items, so we will always have one more no need to increment
+                // process all the fields increment numbers
+                $('*',fs).each(function(){
+                    var elem = $(this);
+                    $.map(elem.attrs(), function(val, key){
+                        var regex = /-(\d+)-/g;
+                        var match = regex.exec(val);
+                        if(match){
+                            // if attribute like -num- replace the number to the next free
+                            elem.attr(key, val.replace('-'+match[1]+'-', '-'+num+'-'));
+                        }
+                    })
+                });
+                fs.find('[value]').not('[type="radio"]').val('');
+                fs.find('[checked]').removeAttr('checked');
+                $(instance.options.formSetItem).last().after(fs);
+            }
+            if(lines == max-1){
+                addButton.hide();
+            }
+            setTotalForms(holder);
+        };
+
+        var getTotalForms = function(holder){
+            return parseInt(holder.find('[name*="TOTAL_FORMS"]').val());
+        };
+
+        var setTotalForms = function(holder){
+            holder.find('[name*="TOTAL_FORMS"]').val($(instance.options.formSetItem).length);
+        };
+
+        var addButton = $('<button class="btn btn-default">Add</button>');
+        var addNewButton = function(fs){
+            addButton.bind('click',function(e){
+                e.preventDefault();
+                addFS(fs);
+            })
+            fs.after(addButton);
+        }
+
+        var instantiateFormSets = function(){
+            if(instance.options.formSets!=''){
+                $(instance.options.form_selector+' '+instance.options.formSets).each(function(){
+                    var el = $(this);
+                    el.data('item', el.find(instance.options.formSetItem).last().clone());
+                    addNewButton(el);
+                })
+            }
+        }
+        instantiateFormSets();
     };
 
     $[pluginName] = function ( options ) {

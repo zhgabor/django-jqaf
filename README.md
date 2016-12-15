@@ -5,9 +5,9 @@ Using csrf token from cookie
 
 ## Installation
 
-* Download [jquery-daf.js](https://github.com/zhgabor/jquery-daf/blob/master/jquery-daf.js) to `/static/js` directory 
+* Download [jquery-daf.js](https://github.com/zhgabor/jquery-daf/blob/master/jquery-daf.js) to `/static/js` directory
 * Include it in your html
-* Bind and Initialize the plugin
+* Bind and Initialize the plugin, check demo
 
 ## Dependencies
 
