@@ -16,6 +16,9 @@ Using csrf token from cookie
 * Django [gettext javascript](https://docs.djangoproject.com/en/1.10/topics/i18n/translation/#using-the-javascript-translation-catalog)
 * Bootstrap [JS Button](http://getbootstrap.com/javascript/#buttons)
 
+## Default options
+
+On instantiation these are overridable, **instance** and **form** is passed to functions
 
 ```javascript
 var defaults = {
