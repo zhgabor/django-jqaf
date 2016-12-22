@@ -76,7 +76,6 @@ function notifyServerError() {
 	        }
 	    },
 	    postSuccess: function(form, response, instance) { // this happens after success post processing can be done here
-	        console.log('after success');
 	        $(instance.options.submitBtn).button('reset').hide('slow');
 	        $(form).hide('slow')
 	    }
