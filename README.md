@@ -13,3 +13,4 @@ Using csrf token from cookie
 
 * [jQuery](http://jquery.com/download/)
 * [toastr](https://github.com/CodeSeven/toastr)
+* Django [gettext javascript](https://docs.djangoproject.com/en/1.10/topics/i18n/translation/#using-the-javascript-translation-catalog)
