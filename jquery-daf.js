@@ -28,6 +28,13 @@ $.ajaxSetup({
     }
 });
 
+if (typeof window['gettext'] == 'undefined'){
+	console.warn('please enable django [gettext] javascript');
+	window['gettext'] = function(str){
+		return str;
+	}
+}
+
 function notifyServerError() {
     toastr.error(gettext('Error occurred. Refresh the page and try again.'))
 }
@@ -50,10 +57,30 @@ function notifyServerError() {
     //     return JsonResponse(data, status=400)
     var pluginName = 'DjangoAjaxHandler2';
     var defaults = {
-        container: $('body'),
-        formSets: '', // only table types are supported
-        captchaField: '#div_id_captcha'
-    };
+	    container: $('body'),
+	    formSets: '', // specify form element placeoholder of the formset, we cannot have more form tags inside a form so replace it
+	    formSetItem: 'tbody tr', // formset table row selector, only used when formSets is specified
+	    captchaField: '#div_id_captcha', // the holder for the google captcha ... used for error message
+	    removeErrors: function(form, instance){ // error remover before submit
+	        $(form).find('.has-error').each(function (item) {
+	           $('div.help-block', item).remove();
+	        }).removeClass('has-error');
+	    },
+	    beforeSubmission: function(form, instance){ // after errors are cleared, preprocessing can be done here
+	        $(instance.options.submitBtn).button('loading');
+	    },
+	    onSuccess: function(form, response){// response from server is 200
+	        toastr.success(response['message']);
+	        if (response['redirect_url']) {
+	            setTimeout(function() {window.location.href = response['redirect_url']}, 1500)
+	        }
+	    },
+	    postSuccess: function(form, response, instance) { // this happens after success post processing can be done here
+	        console.log('after success');
+	        $(instance.options.submitBtn).button('reset').hide('slow');
+	        $(form).hide('slow')
+	    }
+	};
 
     $.fn.attrs = function() {
         if (arguments.length === 0) {
@@ -85,9 +112,8 @@ function notifyServerError() {
 
         var performSubmit = function(e) {
             e.preventDefault();
-            remove_errors();
-            $(instance.options.submitBtn).button('loading');
-            beforeSubmission();
+            instance.options.removeErrors(instance.form, instance);
+            instance.options.beforeSubmission(instance.form, instance);
             submit();
         };
 
@@ -101,49 +127,22 @@ function notifyServerError() {
                 processData: false
             })
             .done(function (payload) {
-                success(payload);
-                if(typeof instance.options.postSuccess == 'function')
-                    instance.options.postSuccess(instance, payload);
-                else
-                    postSuccess(payload);
-
                 if(typeof instance.options.onSuccess == 'function')
                     instance.options.onSuccess(instance.form, payload);
+
+                if(typeof instance.options.postSuccess == 'function')
+                    instance.options.postSuccess(instance.form, payload, instance);
             })
             .fail(function(response) {
-                error(response);
+                processErrors(response);
             })
-        };
-
-        var beforeSubmission = function() {
-        };
-
-        var postSuccess = function(payload) {
-            if (!payload['redirect_url']) {
-                $(instance.options.submitBtn).button('reset').hide('slow');
-                $(instance.form).hide('slow')
-            }
-        };
-
-        var success = function(payload) {
-            // Here you can show the user a success message or do whatever you need
-            toastr.success(payload['message']);
-            if (payload['redirect_url']) {
-                setTimeout(function() {window.location.href = payload['redirect_url']}, 1500)
-            }
         };
 
         var resetBtn = function() {
             $(instance.options.submitBtn).button('reset');
         };
 
-        var remove_errors = function(){
-            $(instance.form).find('.has-error').each(function (item) {
-               $('div.help-block', item).remove();
-            }).removeClass('has-error');
-        };
-
-        var error = function(response) {
+        var processErrors = function(response) {
             // we take the JSON of response and further format it for toaster
             var data = response.responseJSON;
 
@@ -181,11 +180,7 @@ function notifyServerError() {
             resetBtn();
         };
 
-        var bindEvents = function () {
-            instance.options.container.on('click', instance.options.submitBtn, performSubmit);
-        };
-        bindEvents();
-
+        instance.options.container.on('click', instance.options.submitBtn, performSubmit);
 
         var addFS = function(el){
             var holder = el;

@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title> Fairyhub</title>
+    <title>Ajax form post</title>
     <link href="https://fonts.googleapis.com/css?family=Arima+Madurai:300,400,500,700,900" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-2.2.4.js"></script>
     <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
@@ -237,8 +237,12 @@
 
         <script>
             $.DjangoAjaxHandler2({
-                submitBtn: '#submit-register-form',
+                form_selector: '#id-loginform',
+                submitBtn: '#submit-login-form',
+            });
+            $.DjangoAjaxHandler2({
                 form_selector: '#id-registerform',
+                submitBtn: '#submit-register-form',
                 formSets: '.form-set',
                 formSetItem: 'tbody tr'
             });
