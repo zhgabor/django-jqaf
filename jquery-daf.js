@@ -52,6 +52,7 @@ function notifyServerError() {
     var defaults = {
         container: $('body'),
         formSets: '', // only table types are supported
+        captchaField: '#div_id_captcha'
     };
 
     $.fn.attrs = function() {
@@ -162,6 +163,11 @@ function notifyServerError() {
                                 field.parent().next().text(v);
                             }else{
                                 field.parent().after('<div class="help-block">'+v+'</div>');
+                            }
+                            if(k=="captcha"){
+                                var field = $(instance.form).find(instance.options.captchaField);
+                                $(field).addClass('has-error');
+                                toastr.error("Captcha: "+v);
                             }
                             //return '<strong>' + k + '</strong>: ' + v.replace('.', '');
                         }
