@@ -16,6 +16,9 @@ Using csrf token from cookie
 * Django [gettext javascript](https://docs.djangoproject.com/en/1.10/topics/i18n/translation/#using-the-javascript-translation-catalog)
 * Bootstrap [JS Button](http://getbootstrap.com/javascript/#buttons)
 
+## Default options
+
+On instantiation these are overridable, **instance** and **form** is passed to functions
 
 ```javascript
 var defaults = {
@@ -52,7 +55,6 @@ var defaults = {
     
     postSuccess: function(form, response, instance) { 
     // this happens after success post processing can be done here
-        console.log('after success');
         $(instance.options.submitBtn).button('reset').hide('slow');
         $(form).hide('slow')
     }
