@@ -32,6 +32,9 @@ var defaults = {
     
     captchaField: '#div_id_captcha', 
     // the holder for the google captcha ... used for error message
+
+    processErrors: null,
+    // define as a function(form, response){} to use this instead default function
     
     removeErrors: function(form, instance){ 
     // error remover before submit
