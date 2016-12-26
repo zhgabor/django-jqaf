@@ -15,6 +15,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <!--<script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>-->
+    <script src="https://rawgit.com/jakerella/jquery-mockjax/master/dist/jquery.mockjax.min.js"></script>
 </head>
 
 <body>
@@ -50,7 +51,7 @@
                                 <h2>Current Customer</h2>
 
 
-                                <form action="/en/accounts/login/" id="id-loginform" class="loginform" method="post">
+                                <form action="/login/" id="id-loginform" class="loginform" method="post">
                                     <input type='hidden' name='csrfmiddlewaretoken' value='ibM0eX5dlRqehmv6rAn4blMfZV95m9uX' />
                                     <div id="div_id_username" class="form-group">
                                         <label for="id_username" class="control-label col-sm-4 col-lg-4 requiredField">
@@ -240,6 +241,15 @@
                 form_selector: '#id-loginform',
                 submitBtn: '#submit-login-form',
             });
+
+            $.mockjax({
+                url: "/login/",
+                responseText: {
+                    message: "Authenticated"
+                }
+            });
+
+
             $.DjangoAjaxHandler2({
                 form_selector: '#id-registerform',
                 submitBtn: '#submit-register-form',

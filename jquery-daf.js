@@ -66,6 +66,7 @@ function notifyServerError() {
 	           $('div.help-block', item).remove();
 	        }).removeClass('has-error');
 	    },
+        processErrors: null, // define as function(form, payload){} to process errors
 	    beforeSubmission: function(form, instance){ // after errors are cleared, preprocessing can be done here
 	        $(instance.options.submitBtn).button('loading');
 	    },
@@ -133,7 +134,10 @@ function notifyServerError() {
                     instance.options.postSuccess(instance.form, payload, instance);
             })
             .fail(function(response) {
-                processErrors(response);
+                if(typeof instance.options.processErrors == 'function')
+                    instance.options.processErrors(instance.form, response);
+                else
+                    processErrors(response);
             })
         };
 
