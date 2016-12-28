@@ -66,8 +66,8 @@ function notifyServerError() {
 	           $('div.help-block', item).remove();
 	        }).removeClass('has-error');
 	    },
-        processErrors: null, // define as function(form, payload){} to process errors
-        processCaptcha: null, // define as function(form, payload){} to reload captcha
+            processErrors: null, // define as function(form, payload){} to process errors
+            afterResponse: null, // define as function(form, payload){} to reload captcha
 	    beforeSubmission: function(form, instance){ // after errors are cleared, preprocessing can be done here
 	        $(instance.options.submitBtn).button('loading');
 	    },
@@ -139,8 +139,8 @@ function notifyServerError() {
                     instance.options.processErrors(instance.form, response);
                 else
                     processErrors(response);
-                if(typeof instance.options.processCaptcha == 'function')
-                    instance.options.processCaptcha(instance.form, response);
+                if(typeof instance.options.afterResponse == 'function')
+                    instance.options.afterResponse(instance.form, response);
             })
         };
 
