@@ -35,6 +35,9 @@ var defaults = {
 
     processErrors: null,
     // define as a function(form, response){} to use this instead default function
+
+    processCaptcha: null,
+    // define as a function(form, response){} to use this instead default function
     
     removeErrors: function(form, instance){ 
     // error remover before submit

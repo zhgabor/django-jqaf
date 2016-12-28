@@ -254,7 +254,10 @@
                 form_selector: '#id-registerform',
                 submitBtn: '#submit-register-form',
                 formSets: '.form-set',
-                formSetItem: 'tbody tr'
+                formSetItem: 'tbody tr',
+                processCaptcha: function(form, payload){
+                    grecaptcha.reset();
+                }
             });
         </script>
 </body>
