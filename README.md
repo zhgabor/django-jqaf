@@ -24,6 +24,9 @@ On instantiation these are overridable, **instance** and **form** is passed to f
 var defaults = {
     container: $('body'),
     
+    resetSubmitEvents: true,
+    // to reset the propagation of submit event to other plugins
+    
     formSets: '', 
     // specify form element placeoholder of the formset, we cannot have more form tags inside a form so replace it
     
@@ -49,6 +52,11 @@ var defaults = {
     beforeSubmission: function(form, instance){ 
     // after errors are cleared, preprocessing can be done here
         $(instance.options.submitBtn).button('loading');
+    },
+    
+    canSubmit: function(form, instance){
+    // hook to interrupt the submisssion process, return false to stop it
+        return true;
     },
     
     onSuccess: function(form, response){
