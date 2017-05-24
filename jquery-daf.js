@@ -71,6 +71,9 @@ function notifyServerError() {
 	    beforeSubmission: function(form, instance){ // after errors are cleared, preprocessing can be done here
 	        $(instance.options.submitBtn).button('loading');
 	    },
+	    canSubmit: function(form, instance){ // hook here to interrupt the submission process
+                return true;
+            },
 	    onSuccess: function(form, response){// response from server is 200
 	        toastr.success(response['message']);
 	        if (response['redirect_url']) {
@@ -80,7 +83,8 @@ function notifyServerError() {
 	    postSuccess: function(form, response, instance) { // this happens after success post processing can be done here
 	        $(instance.options.submitBtn).button('reset').hide('slow');
 	        $(form).hide('slow')
-	    }
+	    },
+	    resetSubmitEvents: true,
 	};
 
     $.fn.attrs = function() {
@@ -112,10 +116,12 @@ function notifyServerError() {
         var instance = this;
 
         var performSubmit = function(e) {
-            e.preventDefault();
+	    if(instance.options.resetSubmitEvents)
+                e.preventDefault();
             instance.options.removeErrors(instance.form, instance);
             instance.options.beforeSubmission(instance.form, instance);
-            submit();
+	    if(instance.options.canSubmit(instance.form, instance))
+                submit();
         };
 
         var submit = function() {
