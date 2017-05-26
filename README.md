@@ -72,5 +72,8 @@ var defaults = {
         $(instance.options.submitBtn).button('reset').hide('slow');
         $(form).hide('slow')
     }
+    
+    errorHolders: {}
+    // used for defining custom error holder for specific fields like: gender: '.gender-error'
 };
 ```
