@@ -35,6 +35,9 @@ var defaults = {
     
     captchaField: '#div_id_captcha', 
     // the holder for the google captcha ... used for error message
+    
+    fieldHolder: '.form-group',
+    // specify the field block holder where we can manipulate the field error messages, inside of selector
 
     processErrors: null,
     // define as a function(form, response){} to use this instead default function
