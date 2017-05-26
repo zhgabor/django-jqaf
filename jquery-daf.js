@@ -61,19 +61,30 @@ function notifyServerError() {
 	    formSets: '', // specify form element placeoholder of the formset, we cannot have more form tags inside a form so replace it
 	    formSetItem: 'tbody tr', // formset table row selector, only used when formSets is specified
 	    captchaField: '#div_id_captcha', // the holder for the google captcha ... used for error message
+        fieldHolder: '.form-group', // specify the field block holder where we can manipulate the field error messages
 	    removeErrors: function(form, instance){ // error remover before submit
 	        $(form).find('.has-error').each(function (item) {
-	           $('div.help-block', item).remove();
+                if(!$('div.help-block', item).hasClass('no-delete')) {
+                    // we will remove the known error holders which are replaced, the custom ones we leave
+                    $('div.help-block', item).remove();
+                }
 	        }).removeClass('has-error');
+            if(!$.isEmptyObject(instance.options.errorHolders)){
+                //clear all other predefined error holders
+                var classes = $.map( instance.options.errorHolders, function( v, k ) {
+                    return v;
+                }).join();
+                $(form).find(classes).text('');
+            }
 	    },
             processErrors: null, // define as function(form, payload){} to process errors
             afterResponse: null, // define as function(form, payload){} to reload captcha
 	    beforeSubmission: function(form, instance){ // after errors are cleared, preprocessing can be done here
 	        $(instance.options.submitBtn).button('loading');
 	    },
-	    canSubmit: function(form, instance){ // hook here to interrupt the submission process
-                return true;
-            },
+        canSubmit: function(form, instance){ // hook here to interrupt the submission process
+            return true;
+        },
 	    onSuccess: function(form, response){// response from server is 200
 	        toastr.success(response['message']);
 	        if (response['redirect_url']) {
@@ -82,9 +93,29 @@ function notifyServerError() {
 	    },
 	    postSuccess: function(form, response, instance) { // this happens after success post processing can be done here
 	        $(instance.options.submitBtn).button('reset').hide('slow');
-	        $(form).hide('slow')
+	        $(form).hide('slow');
+            $('.message').html(response['message'])
 	    },
-	    resetSubmitEvents: true,
+        resetSubmitEvents: true,
+        errorHolders: {} // key:value pairs. used for placing the error message in a custom holder near the field used mainly for checkboxes / radio
+        /*
+        in this example we define a new custom error holder .error-holder.help-block.no-delete
+        .no-delete will tell clear function not to remove the element only clear it
+        <div class="form-group interest">
+            <h5> {% if field.label %}{{ field.label }}{% endif %}</h5>
+            <ul class="vertical-list">
+                {% for f in field %}
+                    <li>
+                        <div class="checkbox"><label>
+                            <input id="{{ f.id_for_label }}" type="checkbox" name="{{ f.name }}"
+                                   value="{{ f.choice_value }}" {% if f.choice_value in field.value %}checked{% endif %}><span>{{ f.choice_label }}</span></label>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="error-message help-block no-delete"></div>
+        </div>
+        */
 	};
 
     $.fn.attrs = function() {
@@ -116,11 +147,11 @@ function notifyServerError() {
         var instance = this;
 
         var performSubmit = function(e) {
-	    if(instance.options.resetSubmitEvents)
+            if(instance.options.resetSubmitEvents)
                 e.preventDefault();
             instance.options.removeErrors(instance.form, instance);
             instance.options.beforeSubmission(instance.form, instance);
-	    if(instance.options.canSubmit(instance.form, instance))
+            if(instance.options.canSubmit(instance.form, instance))
                 submit();
         };
 
@@ -157,23 +188,27 @@ function notifyServerError() {
         var processErrors = function(response) {
             // we take the JSON of response and further format it for toaster
             var data = response.responseJSON;
-
             if (response.status==400 && data['errors']) {
+                // var errorHolder = instance.options.errorMessages[k];
                 var errors = $.map( data['errors'], function( v, k ) {
                     if(k=='error_message'){
-                        // enable below to return enceError: e is not defined
-                        // return v;
+                        toastr.error(v);
                     }else{
                         if(k=='__all__')
                             toastr.error(v);
                         else
                         {
                             var field = $(instance.form).find('[name='+k+']');
-                            field.parentsUntil('.form-group').parent().addClass('has-error');
-                            if(field.parent().next() && field.parent().next().hasClass('help-block')){
-                                field.parent().next().text(v);
+                            var errorHolder = instance.options.errorHolders[k];
+                            var holder = field.parentsUntil(instance.options.fieldHolder).parent().addClass('has-error');
+                            if(errorHolder){
+                                holder.find(errorHolder).text(v);
                             }else{
-                                field.parent().after('<div class="help-block">'+v+'</div>');
+                                if(field.parent().next() && field.parent().next().hasClass('help-block')){
+                                    field.parent().next().text(v);
+                                }else{
+                                    field.parent().after('<div class="help-block">'+v+'</div>');
+                                }
                             }
                             if(k=="captcha"){
                                 var field = $(instance.form).find(instance.options.captchaField);
