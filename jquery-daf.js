@@ -29,7 +29,7 @@ $.ajaxSetup({
 });
 
 if (typeof window['gettext'] == 'undefined'){
-	console.warn('please enable django [gettext] javascript');
+	console.warn('please enable django [gettext] javascript for translations');
 	window['gettext'] = function(str){
 		return str;
 	}
@@ -77,8 +77,8 @@ function notifyServerError() {
                 $(form).find(classes).text('');
             }
 	    },
-            processErrors: null, // define as function(form, payload){} to process errors
-            afterResponse: null, // define as function(form, payload){} to reload captcha
+        processErrors: null, // define as function(form, payload){} to process errors
+        afterResponse: null, // define as function(form, payload){} to reload captcha
 	    beforeSubmission: function(form, instance){ // after errors are cleared, preprocessing can be done here
 	        $(instance.options.submitBtn).button('loading');
 	    },
@@ -145,6 +145,11 @@ function notifyServerError() {
     Plugin.prototype.init = function () {
 
         var instance = this;
+
+        instance.reload = function(){
+            //reload form from form_selector
+            instance.form = $(instance.options.form_selector)[0];
+        }
 
         var performSubmit = function(e) {
             if(instance.options.resetSubmitEvents)
